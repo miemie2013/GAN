@@ -170,16 +170,16 @@ def infer(args):
         model = DCGAN_model(args.n_samples)
         fake = model.network_G(noise, name="G")
     elif args.model_net == 'SPADE':
-        label_shape = [None, args.label_nc, args.crop_height, args.crop_width]
-        spade_data_shape = [None, 1, args.crop_height, args.crop_width]
+        label_shape = [None, args.label_nc, args.crop_height, args.crop_width]   # [-1, 36, crop_height, crop_width]   每张图片的 语义分割图
+        spade_data_shape = [None, 1, args.crop_height, args.crop_width]          # [-1,  1, crop_height, crop_width]   xxx
         from network.SPADE_network import SPADE_model
         model = SPADE_model()
         input_label = fluid.data(
             name='input_label', shape=label_shape, dtype='float32')
         input_ins = fluid.data(
             name='input_ins', shape=spade_data_shape, dtype='float32')
-        input_ = fluid.layers.concat([input_label, input_ins], 1)
-        fake = model.network_G(input_, "generator", cfg=args, is_test=True)
+        input_ = fluid.layers.concat([input_label, input_ins], 1)                # [-1,  37, crop_height, crop_width]   语义分割图 + xxx
+        fake = model.network_G(input_, "generator", cfg=args, is_test=True)      # SPADE是用 语义分割图 生成假照片
     else:
         raise NotImplementedError("model_net {} is not support".format(
             args.model_net))

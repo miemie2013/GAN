@@ -320,7 +320,7 @@ class triplex_reader_creator(reader_creator):
                 if not args.no_instance:
                     img3 = np.array(img3)[:, :, np.newaxis]   # [h, w, 1]
                     img3 = img3.transpose([2, 0, 1])   # [1, h, w]
-                    ###extracte edge from instance
+                    ###extracte edge from instance   从instance图中获取边缘线条
                     edge = np.zeros(img3.shape)
                     edge = edge.astype('int8')
                     edge[:, :, 1:] = edge[:, :, 1:] | (

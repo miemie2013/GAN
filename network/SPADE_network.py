@@ -28,15 +28,15 @@ class SPADE_model(object):
     def network_G(self, input, name, cfg, is_test=False):
         nf = cfg.ngf
         num_up_layers = 5
-        sw = cfg.crop_width // (2**num_up_layers)
-        sh = cfg.crop_height // (2**num_up_layers)
+        sw = cfg.crop_width // (2**num_up_layers)   # s32
+        sh = cfg.crop_height // (2**num_up_layers)  # s32
         seg = input
         x = fluid.layers.resize_nearest(
-            seg, out_shape=(sh, sw), align_corners=False)
-        x = conv2d(
+            seg, out_shape=(sh, sw), align_corners=False)   # [bz, 37, s32, s32] 把语义分割图缩小，用最近邻插值
+        x = conv2d(   # [bz, 16 * nf, s32, s32]
             x,
-            16 * nf,
-            3,
+            16 * nf,   # 卷积核个数(输出通道数)
+            3,         # 3x3卷积核
             padding=1,
             name=name + "_fc",
             use_bias=True,
@@ -84,14 +84,14 @@ class SPADE_model(object):
             x, alpha=0.2, name=name + '_conv_img_leaky_relu')
         x = conv2d(
             x,
-            3,
-            3,
+            3,   # 卷积核个数(输出通道数)
+            3,   # 3x3卷积核
             padding=1,
             name=name + "_conv_img",
             use_bias=True,
             initial="kaiming",
             is_test=is_test)
-        x = fluid.layers.tanh(x)
+        x = fluid.layers.tanh(x)   # [bz, 3, h, w]
 
         return x
 

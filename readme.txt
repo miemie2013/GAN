@@ -51,6 +51,9 @@ pip install numpy>=1.15.0 -i https://mirror.baidu.com/pypi/simple
 --data_dir是cityscapes文件夹的父目录。
 
 
+算法网络结构：
+https://blog.csdn.net/u014380165/article/details/100110065
+
 
 crop_height减小
 python train.py --model_net SPADE --data_dir E://BaiduNetdiskDownload/ --dataset cityscapes --train_list E://BaiduNetdiskDownload/cityscapes/train_list.txt --test_list E://BaiduNetdiskDownload/cityscapes/val_list.txt --crop_type Random --batch_size 1 --epoch 200 --load_height 356 --load_width 612 --crop_height 256 --crop_width 512 --label_nc 36
