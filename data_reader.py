@@ -303,17 +303,23 @@ class triplex_reader_creator(reader_creator):
                         img3 = img3.resize((args.crop_width, args.crop_height),
                                            Image.NEAREST)
 
-                img1 = np.array(img1)
-                index = img1[np.newaxis, :, :]
+                img1 = np.array(img1)   # [h, w]
+                index = img1[np.newaxis, :, :]   # [1, h, w]
                 input_label = np.zeros(
-                    (args.label_nc, index.shape[1], index.shape[2]))
+                    (args.label_nc, index.shape[1], index.shape[2]))   # [label_nc, h, w]
+
+                # 增加的代码。index中像素值 >= 36的是背景类，置其类别id为nc-1，即最后一类表示背景类。
+                nc = args.label_nc
+                bg_idx = np.where(index >= nc)
+                index[bg_idx] = nc - 1
+
                 np.put_along_axis(input_label, index, 1.0, 0)
-                img1 = input_label
-                img2 = (np.array(img2).astype('float32') / 255.0 - 0.5) / 0.5
-                img2 = img2.transpose([2, 0, 1])
+                img1 = input_label   # [label_nc, h, w]   即类别one-hot
+                img2 = (np.array(img2).astype('float32') / 255.0 - 0.5) / 0.5   # [h, w, 3]   -1 ~ 1之间
+                img2 = img2.transpose([2, 0, 1])   # [3, h, w]   -1 ~ 1之间
                 if not args.no_instance:
-                    img3 = np.array(img3)[:, :, np.newaxis]
-                    img3 = img3.transpose([2, 0, 1])
+                    img3 = np.array(img3)[:, :, np.newaxis]   # [h, w, 1]
+                    img3 = img3.transpose([2, 0, 1])   # [1, h, w]
                     ###extracte edge from instance
                     edge = np.zeros(img3.shape)
                     edge = edge.astype('int8')
@@ -327,8 +333,8 @@ class triplex_reader_creator(reader_creator):
                         img3[:, 1:, :] != img3[:, :-1, :])
                     img3 = edge.astype('float32')
                     ###end extracte
-                batch_out_1.append(img1)
-                batch_out_2.append(img2)
+                batch_out_1.append(img1.astype(np.float32))
+                batch_out_2.append(img2.astype(np.float32))
                 if not args.no_instance:
                     batch_out_3.append(img3)
                 if return_name:

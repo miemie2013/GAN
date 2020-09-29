@@ -35,13 +35,30 @@ cd ~/w*
 
 -------------------------------- SPADE --------------------------------
 训练
+python download.py --dataset=mnist
+
 export FLAGS_eager_delete_tensor_gb=0.0
 export FLAGS_fast_eager_deletion_mode=1
 export FLAGS_fraction_of_gpu_memory_to_use=0.01
 CUDA_VISIBLE_DEVICES=0
 
-python train.py --model_net SPADE --dataset cityscapes --train_list ./data/cityscapes/train_list --test_list ./data/cityscapes/val_list --crop_type Random --batch_size 1 --epoch 200 --load_height 612 --load_width 1124 --crop_height 512 --crop_width 1024 --label_nc 36
 
+
+为了支持np.put_along_axis(input_label, index, 1.0, 0)：
+pip install numpy>=1.15.0 -i https://mirror.baidu.com/pypi/simple
+
+
+
+--data_dir是cityscapes文件夹的父目录。
+
+python train.py --model_net SPADE --data_dir ./data/ --dataset cityscapes --train_list ./data/cityscapes/train_list --test_list ./data/cityscapes/val_list --crop_type Random --batch_size 1 --epoch 200 --load_height 612 --load_width 1124 --crop_height 512 --crop_width 1024 --label_nc 36
+
+
+python train.py --model_net SPADE --data_dir E://BaiduNetdiskDownload/ --dataset cityscapes --train_list E://BaiduNetdiskDownload/cityscapes/train_list.txt --test_list E://BaiduNetdiskDownload/cityscapes/val_list.txt --crop_type Random --batch_size 1 --epoch 200 --load_height 612 --load_width 1124 --crop_height 512 --crop_width 1024 --label_nc 36
+
+
+crop_height减小
+python train.py --model_net SPADE --data_dir E://BaiduNetdiskDownload/ --dataset cityscapes --train_list E://BaiduNetdiskDownload/cityscapes/train_list.txt --test_list E://BaiduNetdiskDownload/cityscapes/val_list.txt --crop_type Random --batch_size 1 --epoch 200 --load_height 356 --load_width 612 --crop_height 256 --crop_width 512 --label_nc 36
 
 
 
@@ -52,10 +69,8 @@ python tools/train.py -r output/solov2_light_448_r50_fpn_8gpu_3x/1000 -c configs
 
 
 预测
-python tools/infer.py -c configs/solov2/solov2_r50_fpn_8gpu_3x.yml --infer_dir=./test_imgs/
+python infer.py --model_net SPADE --test_list ./data/cityscapes/test_list --load_height 512 --load_width 1024 --crop_height 512 --crop_width 1024 --dataset_dir ./data/cityscapes/ --init_model ./spade_py37/checkpoints/99/
 
-
-python tools/infer.py -c configs/solov2/solov2_light_448_r50_fpn_8gpu_3x.yml --infer_dir=./test_imgs/
 
 
 结果压缩成zip方便下载：

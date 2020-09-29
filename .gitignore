@@ -23,8 +23,10 @@ __pycache__/
 
 
 /VGG19_pretrained/
+/spade_G/
 
 
+*.gz
 *.npz
 *.zip
 *.pt
