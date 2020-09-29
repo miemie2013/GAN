@@ -18,6 +18,7 @@ __pycache__/
 /model/__pycache__/
 
 
+/infer_result/
 /inference_model/
 /output/
 

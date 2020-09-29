@@ -48,13 +48,8 @@ CUDA_VISIBLE_DEVICES=0
 pip install numpy>=1.15.0 -i https://mirror.baidu.com/pypi/simple
 
 
-
 --data_dir是cityscapes文件夹的父目录。
 
-python train.py --model_net SPADE --data_dir ./data/ --dataset cityscapes --train_list ./data/cityscapes/train_list --test_list ./data/cityscapes/val_list --crop_type Random --batch_size 1 --epoch 200 --load_height 612 --load_width 1124 --crop_height 512 --crop_width 1024 --label_nc 36
-
-
-python train.py --model_net SPADE --data_dir E://BaiduNetdiskDownload/ --dataset cityscapes --train_list E://BaiduNetdiskDownload/cityscapes/train_list.txt --test_list E://BaiduNetdiskDownload/cityscapes/val_list.txt --crop_type Random --batch_size 1 --epoch 200 --load_height 612 --load_width 1124 --crop_height 512 --crop_width 1024 --label_nc 36
 
 
 crop_height减小
@@ -62,15 +57,15 @@ python train.py --model_net SPADE --data_dir E://BaiduNetdiskDownload/ --dataset
 
 
 
+
+
 （二）恢复训练
 接着上次继续训练。比如上次训练时留下了一个最新的模型，代号是1000，恢复训练时加-r参数：
-python tools/train.py -r output/solov2_light_448_r50_fpn_8gpu_3x/1000 -c configs/solov2/solov2_light_448_r50_fpn_8gpu_3x.yml --eval --eval_iter=30000
 
 
 
 预测
-python infer.py --model_net SPADE --test_list ./data/cityscapes/test_list --load_height 512 --load_width 1024 --crop_height 512 --crop_width 1024 --dataset_dir ./data/cityscapes/ --init_model ./spade_py37/checkpoints/99/
-
+python infer.py --model_net SPADE --dataset_dir E://BaiduNetdiskDownload/cityscapes/ --test_list E://BaiduNetdiskDownload/cityscapes/val_list.txt --load_height 356 --load_width 612 --crop_height 256 --crop_width 512 --init_model ./output/checkpoints/3/
 
 
 结果压缩成zip方便下载：
@@ -80,10 +75,8 @@ zip -r out.zip output/*.jpg
 
 
 验证
-python tools/eval.py -c configs/solov2/solov2_r50_fpn_8gpu_3x.yml
 
 
-python tools/eval.py -c configs/solov2/solov2_light_448_r50_fpn_8gpu_3x.yml
 
 
 
