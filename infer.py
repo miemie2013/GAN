@@ -31,6 +31,8 @@ from util.utility import check_attribute_conflict, check_gpu, save_batch_image, 
 from util import utility
 import copy
 
+paddle.enable_static()
+
 import matplotlib
 matplotlib.use('agg')
 import matplotlib.pyplot as plt

@@ -26,6 +26,8 @@ import paddle
 import paddle.fluid as fluid
 import trainer
 
+paddle.enable_static()
+
 
 def train(cfg):
 
