@@ -55,9 +55,20 @@ pip install numpy>=1.15.0 -i https://mirror.baidu.com/pypi/simple
 https://blog.csdn.net/u014380165/article/details/100110065
 
 
+官方选择的输入尺度
+python train.py --model_net SPADE --data_dir E://BaiduNetdiskDownload/ --dataset cityscapes --train_list E://BaiduNetdiskDownload/cityscapes/train_list.txt --test_list E://BaiduNetdiskDownload/cityscapes/val_list.txt --crop_type Random --batch_size 1 --epoch 200 --load_height 612 --load_width 1124 --crop_height 512 --crop_width 1024 --label_nc 36
+
+
 crop_height减小
 python train.py --model_net SPADE --data_dir E://BaiduNetdiskDownload/ --dataset cityscapes --train_list E://BaiduNetdiskDownload/cityscapes/train_list.txt --test_list E://BaiduNetdiskDownload/cityscapes/val_list.txt --crop_type Random --batch_size 1 --epoch 200 --load_height 356 --load_width 612 --crop_height 256 --crop_width 512 --label_nc 36
 
+
+
+python train.py --model_net StarGAN --dataset celeba --crop_size 178 --image_size 128 --train_list ./data/celeba/list_attr_celeba.txt --batch_size 16 --epoch 20 --gan_mode wgan --output ./output/stargan/ > log_out 2>log_err
+
+python train.py --model_net StarGAN --data_dir E://BaiduNetdiskDownload/ --dataset CelebA/Img --crop_size 178 --image_size 128 --train_list E://BaiduNetdiskDownload/CelebA/Anno/list_attr_celeba.txt --batch_size 16 --epoch 20 --gan_mode wgan --output ./output/stargan/
+
+python infer.py --model_net StarGAN --dataset_dir E://BaiduNetdiskDownload/CelebA/Img/ --test_list E://BaiduNetdiskDownload/CelebA/Anno/list_attr_celeba.txt --init_model ./stargan/ --selected_attrs Black_Hair,Blond_Hair,Brown_Hair,Male,Young --c_dim 5
 
 
 
@@ -69,6 +80,9 @@ python train.py --model_net SPADE --data_dir E://BaiduNetdiskDownload/ --dataset
 
 预测
 python infer.py --model_net SPADE --dataset_dir E://BaiduNetdiskDownload/cityscapes/ --test_list E://BaiduNetdiskDownload/cityscapes/val_list.txt --load_height 356 --load_width 612 --crop_height 256 --crop_width 512 --init_model ./output/checkpoints/3/
+
+
+python infer.py --model_net SPADE --dataset_dir E://BaiduNetdiskDownload/cityscapes/ --test_list E://BaiduNetdiskDownload/cityscapes/val_list.txt --load_height 356 --load_width 612 --crop_height 256 --crop_width 512 --init_model ./spade_G/spade_model/
 
 
 结果压缩成zip方便下载：

@@ -25,6 +25,7 @@ __pycache__/
 
 /VGG19_pretrained/
 /spade_G/
+/stargan/
 
 
 *.gz
