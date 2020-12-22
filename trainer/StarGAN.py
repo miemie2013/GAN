@@ -160,6 +160,7 @@ class DTrainer():
             shape = [a.shape[0]]
             alpha = fluid.layers.uniform_random_batch_size_like(
                 input=a, shape=shape, min=0.0, max=1.0)
+            alpha = fluid.layers.reshape(alpha, (-1, 1, 1, 1))
 
             inner = b * (1.0 - alpha) + a * alpha
             return inner
