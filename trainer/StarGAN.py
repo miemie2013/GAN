@@ -153,6 +153,7 @@ class DTrainer():
                 beta2=0.999,
                 name="net_D")
 
+            # optimizer = fluid.optimizer.SGD(learning_rate=10.0, name="net_D")
             optimizer.minimize(self.d_loss, parameter_list=vars)
 
     def gradient_penalty(self, f, real, fake, cfg=None, name=None):
@@ -165,18 +166,18 @@ class DTrainer():
             inner = b * (1.0 - alpha) + a * alpha
             return inner
 
-        x = _interpolate(real, fake)
-        pred, _ = f(x, cfg, name=name)
-        if isinstance(pred, tuple):
-            pred = pred[0]
+        self.x_hat = _interpolate(real, fake)
+        self.y_hat, _ = f(self.x_hat, cfg, name=name)
+        if isinstance(self.y_hat, tuple):
+            self.y_hat = self.y_hat[0]
         vars = []
         for var in fluid.default_main_program().list_vars():
             if fluid.io.is_parameter(var) and var.name.startswith('d_'):
                 vars.append(var.name)
-        grad = fluid.gradients(pred, x, no_grad_set=vars)[0]
-        grad_shape = grad.shape
+        self.grad = fluid.gradients(self.y_hat, self.x_hat, no_grad_set=vars)[0]
+        grad_shape = self.grad.shape
         grad = fluid.layers.reshape(
-            grad, [-1, grad_shape[1] * grad_shape[2] * grad_shape[3]])
+            self.grad, [-1, grad_shape[1] * grad_shape[2] * grad_shape[3]])
         epsilon = 1e-16
         norm = fluid.layers.sqrt(
             fluid.layers.reduce_sum(
@@ -311,14 +312,31 @@ class StarGAN(object):
             batch_id = 0
             for data in py_reader():
                 s_time = time.time()
-                d_loss_real, d_loss_fake, d_loss, d_loss_cls, d_loss_gp = exe.run(
+                d_loss_real, d_loss_fake, d_loss, d_loss_cls, d_loss_gp, fake_img, x_hat, y_hat, grad = exe.run(
                     dis_trainer_program,
                     fetch_list=[
                         dis_trainer.d_loss_real, dis_trainer.d_loss_fake,
                         dis_trainer.d_loss, dis_trainer.d_loss_cls,
-                        dis_trainer.d_loss_gp
+                        dis_trainer.d_loss_gp, dis_trainer.fake_img, dis_trainer.x_hat, dis_trainer.y_hat, dis_trainer.grad
                     ],
                     feed=data)
+                # dic = {}
+                # dic['image_real'] = np.array(data[0]['image_real'])
+                # dic['label_org'] = np.array(data[0]['label_org'])
+                # dic['label_trg'] = np.array(data[0]['label_trg'])
+                # dic['d_loss_real'] = d_loss_real
+                # dic['d_loss_fake'] = d_loss_fake
+                # dic['d_loss_cls'] = d_loss_cls
+                # dic['d_loss_gp'] = d_loss_gp
+                # dic['fake_img'] = fake_img
+                # dic['x_hat'] = x_hat
+                # dic['y_hat'] = y_hat
+                # dic['grad'] = grad
+                # d_main0_w = np.array(fluid.global_scope().find_var('d_main0_w').get_tensor())
+                # dic['d_main0_w'] = d_main0_w
+                # np.savez('data%d'%batch_id, **dic)
+                # utility.checkpoints(batch_id+222, self.cfg, exe, dis_trainer,
+                #                     "net_D")
                 # optimize the generator network
                 if (batch_id + 1) % self.cfg.n_critic == 0:
                     g_loss_fake, g_loss_rec, g_loss_cls, fake_img, rec_img = exe.run(
