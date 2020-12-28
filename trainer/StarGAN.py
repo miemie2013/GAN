@@ -307,9 +307,9 @@ class StarGAN(object):
                 build_strategy=build_strategy)
 
         t_time = 0
-
         for epoch_id in range(self.cfg.epoch):
             batch_id = 0
+            t1 = time.time()
             for data in py_reader():
                 s_time = time.time()
                 d_loss_real, d_loss_fake, d_loss, d_loss_cls, d_loss_gp, fake_img, x_hat, y_hat, grad = exe.run(
@@ -347,19 +347,23 @@ class StarGAN(object):
                             gen_trainer.rec_img
                         ],
                         feed=data)
-                    print("epoch{}: batch{}: \n\
-                         g_loss_fake: {}; g_loss_rec: {}; g_loss_cls: {}"
-                          .format(epoch_id, batch_id, g_loss_fake[0],
-                                  g_loss_rec[0], g_loss_cls[0]))
+                    # print("epoch{}: batch{}: \n\
+                    #      g_loss_fake: {}; g_loss_rec: {}; g_loss_cls: {}"
+                    #       .format(epoch_id, batch_id, g_loss_fake[0],
+                    #               g_loss_rec[0], g_loss_cls[0]))
 
                 batch_time = time.time() - s_time
                 t_time += batch_time
+                time_cost = time.time() - t1
+                speed = ((batch_id + 1) / time_cost)
+                speed *= self.cfg.batch_size
+                speed_msg = '%.3f imgs/s.' % (speed,)
                 if (batch_id + 1) % self.cfg.print_freq == 0:
                     print("epoch{}: batch{}: \n\
                          d_loss_real: {}; d_loss_fake: {}; d_loss_cls: {}; d_loss_gp: {} \n\
-                         Batch_time_cost: {}".format(
+                         Batch_time_cost: {}, speed: {}".format(
                         epoch_id, batch_id, d_loss_real[0], d_loss_fake[
-                            0], d_loss_cls[0], d_loss_gp[0], batch_time))
+                            0], d_loss_cls[0], d_loss_gp[0], batch_time, speed_msg))
 
                 sys.stdout.flush()
                 batch_id += 1

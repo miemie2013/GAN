@@ -66,7 +66,15 @@ python train.py --model_net SPADE --data_dir E://BaiduNetdiskDownload/ --dataset
 
 python train.py --model_net StarGAN --dataset celeba --crop_size 178 --image_size 128 --train_list ./data/celeba/list_attr_celeba.txt --batch_size 16 --epoch 20 --gan_mode wgan --output ./output/stargan/ > log_out 2>log_err
 
+
 python train.py --model_net StarGAN --data_dir E://BaiduNetdiskDownload/ --dataset CelebA/Img --crop_size 178 --image_size 128 --train_list E://BaiduNetdiskDownload/CelebA/Anno/list_attr_celeba.txt --batch_size 8 --epoch 20 --gan_mode wgan --output ./output/stargan/
+
+(AIStudio)
+python train.py --model_net StarGAN --batch_size 80 --print_freq 10 --data_dir ../data/data11404/ --dataset celeba --crop_size 178 --image_size 128 --train_list ../data/data11404/celeba/list_attr_celeba.txt --epoch 20 --gan_mode wgan --output ./output/stargan/
+
+python train.py --model_net StarGAN --batch_size 16 --print_freq 10 --data_dir ../data/data11404/ --dataset celeba --crop_size 178 --image_size 128 --train_list ../data/data11404/celeba/list_attr_celeba.txt --epoch 20 --gan_mode wgan --output ./output/stargan/
+
+
 
 python infer.py --model_net StarGAN --dataset_dir E://BaiduNetdiskDownload/CelebA/Img/ --test_list E://BaiduNetdiskDownload/CelebA/Anno/list_attr_celeba.txt --init_model ./stargan/ --selected_attrs Black_Hair,Blond_Hair,Brown_Hair,Male,Young --c_dim 5
 
